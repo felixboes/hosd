@@ -1,0 +1,14 @@
+
+*** slicing ***
+
+This is an example of a big cube with some small cubes removed from it 
+in such a way that the resulting set is homotopically equivalent to the 
+wadge sum of 2 circles, 2 spheres and one torus of genus 2. This example 
+was created with a program by T. Grudskaya, which I got from G. Watson.
+
+If this set is sliced along one of the coordinate axes into several pieces 
+which overlap for the width of one or more cubes, then these pieces 
+can be reduced separately, provided the overlapping parts are preserved. 
+After gluing the reduced pieces together, one can compute the homology of 
+this set and the result should be the same as for the entire set, but the 
+computations should be faster.

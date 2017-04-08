@@ -1,0 +1,16 @@
+
+*** nonred ***
+
+This is an example of two geometric figures which are unions of cubes 
+which are difficult to reduce, although they are acyclic, that is, their 
+homology is the homology of a one-point space.
+
+The first example cannot be reduced by means of removing cubes, because 
+the removal of any cube causes the change of the homology of the set. 
+However, this set can be reduced to a single point by means of free face 
+collapses. [Note: The new version of "homcubes" does not reduce it anymore.]
+
+The second example is even more complicated. It has the property that 
+the removal of any cube causes the change to its homology, and, moreover, 
+by means of free face collapses it can be reduced to another set of dimension 
+two, but not to a single point.

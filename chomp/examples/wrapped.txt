@@ -1,0 +1,21 @@
+
+*** wrapped ***
+
+This example illustrates the idea of space wrapping. If we take a set 
+of squares in the plane depicted in the picture below (each '#' indicates 
+a squre; spaces between the squares were added to make the picture clear). 
+It can be easily seen that this figure has 3 connected components and its 
+homology over Z is: H_0 = Z^3, H_1 = 0. However, if we "wrap" the space 
+every 10 squares, then some loops appear and it turns out that the entire 
+figure becomes connected.
+
+		  # #   #       #   
+		# #     # # # # #   
+		  # #     #         
+		    # # # # # # # # 
+		# # # #           # 
+		  #   # #   # # # # 
+		        #   #       
+		# #   # #   # # # # 
+		  #   # #   #       
+		  #     #   #   #   

@@ -1,0 +1,16 @@
+
+*** simproj2 ***
+
+In this example, the homology of a simplicial complex of the projective 
+plane is computed.
+
+In the first step, a chain complex is created from the list of simplices 
+of the highest dimension by the program "simchain". Then the homology of 
+this chain complex is computed by the program "homchain", first with 
+coefficients in Z, then in Z_2.
+
+The program "homsimpl" can perform both steps of the computations at one
+fell swoop. It is used to compute the homology of the simplicial complex
+directly over the field Z_13.
+
+Note that in all the three cases you should obtain different results.

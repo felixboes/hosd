@@ -1,0 +1,9 @@
+
+*** bing ***
+
+Bing's house with two rooms is an example of a contractible cubical set,
+built of squares embedded in R^3, which cannot be reduced by means of
+free face collapses.
+
+The two versions contained in this package were prepared by Jaroslaw Karpiak.
+The computations are performed by the program "homcubes".

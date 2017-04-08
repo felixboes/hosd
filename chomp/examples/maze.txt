@@ -1,0 +1,21 @@
+
+*** maze ***
+
+In this example the homology of a closed maze stored in a bitmap file 
+is computed. The external wall forms the circle in which the maze is
+contained. If the maze picture has the homology of the circle, 
+then this means that all the internal walls can be homotopically 
+contracted towards the external wall and, as a consequence, from 
+every place inside the maze to every other place there exists 
+a path between the walls and this path is unique.
+
+First, the black pixels in the picture are extracted to form a cubical set 
+- in this case, a set of squares. For this purpose the program "bmp2pset" 
+is used. This program converts a bitmap picture to a set of points in R^2 
+corresponding to lower left corners of black pixels in the picture. 
+Then the homology module of the resulting set is computed by the program 
+"homcubes". Note that before the algebraic computations are performed, 
+the set of cubes (or rather: squares) is reduced: cubes which can be 
+removed without change to the homology are deleted from the cubical set.
+
+Note: The intermediate set of cubes takes about 400 kB of disk space.

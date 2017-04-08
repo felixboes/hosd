@@ -1,0 +1,15 @@
+
+*** simrelat ***
+
+In this example, the relative homology of a pair of simplicial complexes 
+is computed. Both complexes represent circles, but relative homology of 
+the pair is not trivial.
+
+In the first step, a chain complex is created from the list of simplices 
+of the highest dimension in each element of the pair by the program 
+"simchain". Then the homology of this chain complex is computed by the 
+program "homchain".
+
+The program "homsimpl" can perform both steps of the computations at one
+fell swoop. It is used to compute the homology of the pair of simplicial
+complexes directly.

@@ -1,0 +1,10 @@
+
+*** repeller ***
+
+This example illustrates how to compute the discrete Conley index of a 
+repelling fixed point in R^1.
+
+First, the Szymczak's algorithm for finding an isolating neighborhood 
+and an index pair is used. Then the program "homcubes" is used to compute 
+the discrete Conley index which consists of the relative homology of the 
+index pair and the map induced in homology by f and by the inclusion.

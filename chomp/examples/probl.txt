@@ -1,0 +1,15 @@
+
+*** probl ***
+
+This is a real example of a map which seems to be good for homology
+computation, but the program "homcubes" reduces the cubes in such a way
+that after the reduction the map is no longer acyclic. However, if one
+turns on the careful reduction method which does preserve the acyclicity
+of the map (this is done by the "-a" switch), then the program works fine
+(though slower) and gives the right result.
+This example was provided by Sarah Day and comes from the Conley index
+for the Henon map.
+
+Note: The above holds true for "homcubes" version 3.07 as of August 2010,
+but may not apply to the new revisions of "homcubes" due to the possible
+changes in the reduction algorithms.

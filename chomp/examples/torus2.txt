@@ -1,0 +1,21 @@
+
+*** torus 2 ***
+
+In this example the homomorphism induced in homology by a combinatorial
+cubical multivalued map on a torus is computed.
+
+A representation of the torus built of full cubes in R^3 is used,
+and each cube is mapped to a set of cubes in this representation.
+The image of the map is wound twice along the torus, which is reflected
+in the homomorphism induced in homology.
+
+An interesting additional feature of this map is that careful reduction
+algorithm must be used (activated by the "-a" switch to "homcubes"),
+or otherwise the result of the computations is wrong.
+
+The additional switch "-i" makes the program additionally compute
+the homomorphism induced in homology by the inclusion of the domain
+into the codomain of the map, so that the final map is printed
+with respect to the same homology generators.
+
+This example was provided by Prof. Marian Mrozek.

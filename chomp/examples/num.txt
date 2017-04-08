@@ -1,0 +1,13 @@
+
+*** numeric cubes ***
+
+This example illustrates a compact representation of cubical sets and maps.
+
+Since the same cubes are often repeated several times in the definition
+of a map, the homology software accepts using plain integer numbers
+starting at 1 to reprsent cubes in the input data files. In order to
+associate the numbers with appropriate cubes, one must prepare the set
+of all the cubes used in the data files and list them in a separate file,
+whose name is passed to the homology software with the '-c' argument.
+
+Please, consult the specific data files for more details.

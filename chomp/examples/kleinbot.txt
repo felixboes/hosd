@@ -1,0 +1,16 @@
+
+*** kleinbot ***
+
+In this example, the homology module of the Klein bottle
+is computed with coefficients in Z and in Z_2.
+
+The homology module is computed by the program "homcubes". We first 
+compute the homology module with integer coefficients, and then with 
+coefficients in Z_2.
+
+This example contains two representations of the Klein bottle.
+One consists of 4-dimensional full cubes in R^4 and was created
+with the use of a parametrization for embedding of this manifold
+into R^4. The other one consists of 2-dimensional elementary cubes
+(cubical cells) in R^4 and was obtained from the first one
+by geometric reduction programmed in "homcubes".

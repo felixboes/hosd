@@ -1,0 +1,10 @@
+
+Here are example commands (note: the created files have the extension ".bak"
+in order to prevent them from being added to backup archives).
+
+Start the coordinator:
+./mwnum -p2222 -lmwnum1.bak localhost:3333 localhost:4444 -rmwnum0.bak -smwnum0.bak
+
+Start two workers:
+./mwnum -w localhost:2222 -p3333 -lmwnum2.bak
+./mwnum -w localhost:2222 -p4444 -lmwnum3.bak

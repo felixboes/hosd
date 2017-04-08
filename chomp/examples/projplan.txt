@@ -1,0 +1,13 @@
+
+*** projplan ***
+
+In this example the homology module over Z and over Z_2 of the projective 
+plane is computed.
+
+A chain complex of the projective plane is stored in a file and its 
+homology module is computed by the program "homchain". The computations 
+are performed first with the coefficients in Z, and then in Z_2.
+
+Note: A simplicial complex of the projective plane embedded into the
+boundary of a 5-dimensional hypercube as a cubical set was prepared
+by Navin Sivakumar. Please, see the accompanying PDF file for details.

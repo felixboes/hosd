@@ -1,0 +1,12 @@
+
+*** excision ***
+
+This is an example of an index pair (for a discrete dynamical system)
+which does not satisfy the excision property, as explained in the paper
+"Excision-preserving Cubical Approach to the Algorithmic Computation
+of the Discrete Conley Index" by K. Stolot and P. Pilarczyk.
+
+The index map in homology cannot be computed by the program "homcubes"
+because of the excision problem. Therefore, one must use the program
+"homcub2l" instead, which operates on two-layer cubical sets
+in order to get over this problem.

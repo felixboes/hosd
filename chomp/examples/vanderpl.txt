@@ -1,0 +1,21 @@
+
+*** vanderpl ***
+
+This is an example of a cubical map generated for the Van der Pol
+equations embedded in R^3. An isolating neighbourhood of an attracting
+trajectory was chosen here and a map corresponding to a discretization
+of the dynamical system was generated. Each cube is mapped into
+a rectangular set in R^3 (a prism) contained in this neighbourhood.
+
+Method 1. We first verify that the map is almost perfect with the program 
+"chkperf". Then the program "chmap" is used to create a chain map for 
+homology computation. The result of the program is trsnsformed into 
+a purely algebraic chain map by the program "cnvchmap". Finally, the program 
+"homchain" computes the map induced in homology. Note that the basis found 
+in the codomain may be different from the basis found in the domain of the map.
+
+Method 2. We use the program "homcubes" directly. We first verify with the 
+program "chkmvmap" that the map satisfies the necessary assumptions, and then 
+we compute the map itself with "homcubes". Note that since we have the map 
+induced by the inclusion in homology, we know how the generators in the 
+domain of the map are related to the generators in the codomain of the map.

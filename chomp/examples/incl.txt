@@ -1,0 +1,10 @@
+
+*** incl ***
+
+This example shows a Conley index map which seems fine
+for the homology computathion, but the homomorphism
+induced in homology by the inclusion of the index pair
+into its enlargement by its image is not an isomorphism.
+A way to overcome this problem is to lift the cubes
+in X\A to a higher level, either by modifying the input data,
+or by using the program "homcub2l".

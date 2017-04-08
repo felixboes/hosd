@@ -1,0 +1,21 @@
+
+*** circle ***
+
+In this example a map of a circle onto itself with double winding 
+is defined. The map in homology thus maps the 1-dimensional generator 
+onto itself with the coefficient of 2. The map is given as a cubical 
+multivalued map.
+
+Old Method. We first use the program "chkperf" in order to verify that the
+map is "almost perfect", i.e., that it satisfies assumptions required by an
+algorithm by Madjid Allili and Tomasz Kaczynski for creating a chain map
+for homology computation. Then we run the program "chmap" written by Jacek
+Szybowski and Marcin Mazur, and we obtain a chain map in a geometrical format.
+We convert this chain map to purely algebraic data with the use of the program
+"cnvchmap". At this point we are ready to compute the homomorphism
+induced by this chain map in homology with the "homchain" program.
+
+New Method. The map induced in homology can be computed directly
+by the program "homcubes". The geometric approach is different,
+and relies on the construction of the graph of the map and computing
+the homomorphisms induced by the projections.

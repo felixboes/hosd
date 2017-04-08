@@ -1,0 +1,13 @@
+
+*** thin circle ***
+
+In this example a map of a circle onto itself with double winding 
+is defined. The map in homology thus maps the 1-dimensional generator 
+onto itself with the multiplication coefficient 2. The map is given
+as a multivalued map defined on cubical cells of dimension lower
+than the space dimension, and thus cannot be handled by the program
+"homcubes" directly.
+
+This is a modification of the "circle" example. This example uses
+a demonstration program "homcelmp", so make sure that the "progdemo"
+set of programs has also been compiled.

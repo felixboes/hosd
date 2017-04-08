@@ -1,0 +1,11 @@
+
+*** dim10 ***
+
+In this example the homology of a 10-dimensional hypercube in R^10
+is computed.
+
+The definition of the cube is stored in the file "dim10.cub".
+The computations are performed by the program "homcubes".
+
+This example illustrates the major difficulty in handling high-dimensional
+data: The huge numer of faces of each single hypercube.

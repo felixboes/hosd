@@ -1,0 +1,20 @@
+
+*** torus ***
+
+In this example the homology module of the torus is computed.
+
+A chain complex of the torus is stored in a file and its homology 
+module is computed by the program "homchain".
+
+The file begins with the phrase "chain complex" (or "chaincomplex"), 
+then the maximal dimension of cells is indicated in the form 
+"maximal dimension 2", and afterwards the boundaries of cells are defined 
+for each dimension separately. The names of the cells can be any sequences 
+of characters isolated by blank characters (the space, the tabulator or end 
+of line), not beginning with '+', '-', ':', '*', ';' and '=', and different 
+from the words "#", "0", "boundary", "image" and "dimension".
+If the boundary of any cell is zero, then the formula for its boundary 
+can be omitted or entered as "b cell3 = 0" or simply "b cell3". If not all 
+the cells of some dimension appear in the boundaries of other cells and their 
+boundaries are 0 (like isolated points, for example), the number of cells 
+for this dimension must be declared in the form "dimension 0: 33".

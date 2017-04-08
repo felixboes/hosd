@@ -1,0 +1,21 @@
+
+*** nonacycl ***
+
+This is an example of an acyclic cubical multivalued map F: X -> Y such that
+its restriction to the subset A of X is not acyclic. Therefore, the map
+induced by F: (X, A) -> (Y, B) cannot be computed by "homcubes".
++---+---+
+| a | b |           X = Y = {a, b, c, D, e, f}      A = B = {a, b, c, e, f}
++---+---+---+
+| c | D | f |       a -> {c, b}     b -> {b, f}     c -> {e, c},
+*---+---+---+
+    | e |           D -> {a, b, c, D, e, f}         e -> {e}       f -> {f}
+    +---+
+As one can analyze, the image of each elementary cube in the domain is an
+acyclic set. However, if one removes the cube 'D' from the map's domain, then
+the common vertex of the cubes 'a', 'b' and 'c' has the image consisting of
+'b', 'c', 'e' and 'f', which is not acyclic.
+
+Note that this map has an acyclic selector - the "orthogonal projection"
+onto the stripe [0,3] x [0,1], for example (if '*' indicates the origin).
+Therefore, the map induced in homology should be the identity.

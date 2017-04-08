@@ -1,0 +1,13 @@
+
+*** relative ***
+
+In this example, relative homology of a pair of sets (X, Y) painted in 
+a BMP file is computed. The set Y consists of black pixels, and the set 
+X\Y is painted in grey.
+
+In the first stage two cubical sets are extracted from the BMP picture: 
+These are X and Y. Then we run the "homcubes" program to compute the 
+relative homology of the pair.
+
+Note: You can paint your own picture of another pair (X, Y), save it to the 
+file "relative.bmp", and then run this example to compute its homology.

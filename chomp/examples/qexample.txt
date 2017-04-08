@@ -1,0 +1,14 @@
+
+*** qexample ***
+
+This is a series of examples of simplicial complexes represented in terms
+of faces of an n-dimensional hypercube in R^n.
+
+These examples illustrate the theorem saying that every simplicial complex
+can be realized by means of a (general) cubical set contained in the boundary
+of a single n-dimensional cube in R^n.
+
+This theorem in particular proves that the intersection of a full cube
+with its neighboring full cubes can be arbitrarily complicated.
+
+These examples were prepared by Anik Trahan from University of Sherbrooke.

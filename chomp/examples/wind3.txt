@@ -1,0 +1,7 @@
+
+*** wind3 ***
+
+This is a very simple example of a chain map which maps the circle 
+onto itself with triple winding up.
+
+In the map in homology one should expect the coefficient 3 to appear.

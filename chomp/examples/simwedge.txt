@@ -1,0 +1,16 @@
+
+*** simwedge ***
+
+In this example, the homology of a simplicial complex of the wedge of the
+sphere and two circles is computed. Note that the homology of this object,
+which in this example consists of the boundary of a tetrahedron joined
+with boundaries of two adjacent triangles, is the same as the homology
+of the torus, and thus these two objects cannot be distinguished
+from each other just by homology computation.
+
+In the first step, a chain complex is created from the list of simplices 
+of the highest dimension by the program "simchain". Then the homology of 
+this chain complex is computed by the program "homchain".
+
+The program "homsimpl" can perform both steps of the computations at one fell
+swoop. It is used to compute the homology of the simplicial complex directly.
