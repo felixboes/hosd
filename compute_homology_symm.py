@@ -27,7 +27,7 @@ def main():
     # check for correct version.
     major, minor = sys.version_info[0], sys.version_info[1]
     if major < 2 or (major == 2 and minor < 7):
-        raise "Python >= 2.7 is required for argument parsing."
+        raise RuntimeError('Python >= 2.7 is required for argument parsing.')
 
     # Use the argparse library. The library optparse is deprecated since version 2.7.
     # Compare the documentation: https://docs.python.org/2/library/argparse.html
@@ -44,18 +44,22 @@ def main():
     # Note: we provide nargs=N and the N arguments from the command line will be gathered together into a list.
     # Thus, we supress nargs.
     parser.add_argument('-d', '--max_d', required=True,  action='store', type=int, dest='max_d',         metavar='arg',  help='The top degree of the Symm_d complex.')
+    parser.add_argument('-c', '--num_cyc',               action='store', type=int, dest='num_cyc',       metavar='arg',  help='Restrict to a specific number of cycles.', default=0)
     parser.add_argument('-v',                            action='store_true',      dest='verbose',                       help='Print status information.', default=False)
     parser.add_argument('-s',                            action='store_true',      dest='silent',                        help='Print no status information.', default=False)
     parser.add_argument('--save_homchain',               action='store', nargs=1,  dest='homchain_file', metavar='file', help='Store homchain file.')
     args=vars( parser.parse_args() )
 
     # Setup verbosenes.
+    if args['num_cyc'] <= 0:
+      del args['num_cyc']
+    args['homchain_file'] = args['homchain_file'][0]
     if args['silent']:
         args['verbose'] = args.get('verbose', 'False')
     else:
         args['verbose'] = args.get('verbose', 'True')
     del args['silent']
-    args['homchain_file'] = args['homchain_file'][0]
+
 
     # The name of the results file.
     result_file = './results/' + ''.join( [str(param).replace(' ', '_').replace('/', '_') for param in sys.argv if str(param) ] ).strip('.').lstrip('_')
@@ -69,14 +73,14 @@ def main():
 
     # Stop of something went wrong.
     if valid == False:
-        print("Could not initialize everything. Abroating.")
+        sys.stdout.write('Could not initialize everything. Abroating.\n')
         return 1
 
     # Start actual computation.
     pyradbar.compute_homology_symm(**args)
 
     # Cleanup screen with new lines.
-    print('')
+    sys.stdout.write('\n')
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()

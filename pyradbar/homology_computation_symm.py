@@ -24,7 +24,7 @@ import time
 from .symmetric_group import Permutation, SymmetricGroup
 from .misc_useability_stuff import write_chaincomplex_to_chomp_representation
 
-def compute_homology_symm(max_d, verbose=True, homchain_file=None):
+def compute_homology_symm(max_d, verbose=True, homchain_file=None, num_cyc=None):
   # Open homchain file.
   open_file = None
   if homchain_file is not None:
@@ -55,8 +55,10 @@ def compute_homology_symm(max_d, verbose=True, homchain_file=None):
       starting_time = time.process_time()
 
     sym = SymmetricGroup(max_d)
-    cells = sym.get_long_cycles()
-    #cells = sym.get_all_permutations()
+    #cells = sym.get_long_cycles()
+    cells = sym.get_all_permutations()
+    if num_cyc is not None:
+      cells = [cell for cell in cells if cell.num_cyc() == num_cyc]
     print(len(cells), ' ... ', end='')
     for cell in cells:
       next_basis[cell] = next_basis.get(cell, len(next_basis))
@@ -69,7 +71,7 @@ def compute_homology_symm(max_d, verbose=True, homchain_file=None):
       print('Computing the differential D_', degree, ' ... ', sep='', end='')
       starting_time = time.clock()
 
-    next_basis, num_rows, num_cols, bdry_matrix_dict = compute_faces_matrix(next_basis, degree)
+    next_basis, num_rows, num_cols, bdry_matrix_dict = compute_faces_matrix(next_basis, degree, num_cyc)
     dict_chaincomplex[degree] = (num_rows, num_cols, bdry_matrix_dict)
 
     degree -= 1
@@ -83,7 +85,7 @@ def compute_homology_symm(max_d, verbose=True, homchain_file=None):
         print('Computing the differential D_', degree,' ... ', sep='', end='')
         starting_time = time.clock()
 
-      next_basis, num_rows, num_cols, bdry_matrix_dict = compute_faces_matrix(next_basis, degree)
+      next_basis, num_rows, num_cols, bdry_matrix_dict = compute_faces_matrix(next_basis, degree, num_cyc)
       dict_chaincomplex[degree] = (num_rows, num_cols, bdry_matrix_dict)
 
       if verbose:
@@ -104,7 +106,7 @@ def compute_homology_symm(max_d, verbose=True, homchain_file=None):
       open_file.close()
 
 
-def compute_faces_matrix(cells, degree):
+def compute_faces_matrix(cells, degree, num_cyc):
   # Setup variables.
   next_basis = {}
   matrix_dict = {}
@@ -127,8 +129,9 @@ def compute_faces_matrix(cells, degree):
     sign = 1
     for i in range(degree + 1):
       face = cell.face(i)
-      face_idx = next_basis[face] = next_basis.get(face, len(next_basis))
-      coefficients[face_idx] = coefficients.get(face_idx, 0) + sign
+      if num_cyc is None or face.num_cyc() == num_cyc:
+        face_idx = next_basis[face] = next_basis.get(face, len(next_basis))
+        coefficients[face_idx] = coefficients.get(face_idx, 0) + sign
       sign *= -1
 
     # store the column in the dictionary
