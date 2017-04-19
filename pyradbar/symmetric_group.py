@@ -28,13 +28,15 @@ class Permutation(object):
       self._rep = tuple(range(d + 1))
     else:
       self._rep = tuple(perm)
+      if len(self._rep) != self._d+1:
+        raise ValueError('A degree d permutation has to have length d+1.')
     self._hash = None
 
   def compute_norm(self):
     i = 0
-    self._norm = self._d
-    visited = (self._d + 1) * [False]
-    visited[self._d] = True
+    self._norm = self._d+1
+    visited = (self._d + 2) * [False]
+    visited[self._d+1] = True
 
     while not visited[i]:
       self._norm -= 1
@@ -44,11 +46,11 @@ class Permutation(object):
         j = self._rep[j]
         visited[j] = True
 
-      while visited[i] and i < self._d:
+      while visited[i] and i <= self._d:
         i += 1
 
   def degree(self):
-    return self._d - 1
+    return self._d
 
   def norm(self):
     if self._norm == -1: # Norm has to be computed.
@@ -56,10 +58,10 @@ class Permutation(object):
     return self._norm
 
   def num_cyc(self):
-    return self._d - self.norm()
+    return self._d+1 - self.norm()
 
   def fixed_pts(self):
-    return [x for x in range(self._d) if self._rep[x] == x]
+    return [x for x in range(self._d+1) if self._rep[x] == x]
 
   def num_fixed_pts(self):
     return len(self.fixed_pts())
@@ -67,8 +69,8 @@ class Permutation(object):
   def cycle_decomposition(self):
     i = 0
     cycle_decomp = []
-    visited = (self._d + 1) * [False]
-    visited[self._d] = True
+    visited = (self._d + 2) * [False]
+    visited[self._d+1] = True
 
     while not visited[i]:
       cycle_decomp.append([i])
@@ -79,19 +81,19 @@ class Permutation(object):
         j = self._rep[j]
         visited[j] = True
 
-      while visited[i] and i < self._d:
+      while visited[i] and i <= self._d:
         i += 1
 
     return tuple(tuple(x) for x in cycle_decomp)
 
   def face(self, num_i):
-    i = int(num_i) % self._d
+    i = int(num_i) % (self._d+1)
 
     suc = self._rep[i]
-    transp = [x for x in range(self._d)]
+    transp = [x for x in range(self._d+1)]
     transp[i] = suc
     transp[suc] = i
-    intermediate_tau = [transp[self._rep[x]] for x in range(self._d) if x != i]
+    intermediate_tau = [transp[self._rep[x]] for x in range(self._d+1) if x != i]
 
     return Permutation(self._d - 1, [x if x < i else x - 1 for x in intermediate_tau] )
 
@@ -104,12 +106,12 @@ class Permutation(object):
   def __hash__(self):
     if self._hash is None:
       self._hash = int(0)
-      for x in range(self._d):
+      for x in range(self._d+1):
         self._hash += self._rep[x] * 10 ** x
       return self._hash
     else:
       hash = int(0)
-      for x in range(self._d):
+      for x in range(self._d+1):
         hash += self._rep[x] * 10 ** x
       if self._hash == hash:
         return self._hash
@@ -122,14 +124,17 @@ class SymmetricGroup(object):
   def __init__(self, d):
     self._d = d
 
+  def get_all_permutations(self):
+    return [Permutation(self._d, p) for p in itertools.permutations(range(self._d+1))]
+
   def get_long_cycles(self):
     # Compute permtuations that have one cycle by giving the cycle decomposition:
-    cyc_decs = [(0,) + p for p in itertools.permutations( range(1, self._d) )]
+    cyc_decs = [(0,) + p for p in itertools.permutations( range(1, self._d+1) )]
     # Compute the map representation:
     permutations = []
     for cyc in cyc_decs:
       rep = self._d*[0]
-      for i in range(self._d):
-        rep[cyc[i]] = cyc[(i + 1) % self._d]
+      for i in range(self._d+1):
+        rep[cyc[i]] = cyc[(i + 1) % (self._d+1)]
       permutations.append(Permutation(self._d, rep))
     return permutations

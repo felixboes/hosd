@@ -55,7 +55,9 @@ def compute_homology_symm(max_d, verbose=True, homchain_file=None):
       starting_time = time.process_time()
 
     sym = SymmetricGroup(max_d)
-    cells = sym.get_long_cycles()
+    #cells = sym.get_long_cycles()
+    cells = sym.get_all_permutations()
+    print(len(cells), ' ... ', end='')
     for cell in cells:
       next_basis[cell] = next_basis.get(cell, len(next_basis))
 
@@ -131,7 +133,8 @@ def compute_faces_matrix(cells, degree):
 
     # store the column in the dictionary
     for face_idx, coeff in coefficients.items():
-      matrix_dict[face_idx, cell_idx] = coeff
+      if coeff != 0:
+        matrix_dict[face_idx, cell_idx] = coeff
 
   # Compute number of columns and rows.
   num_cols = len(cells)
