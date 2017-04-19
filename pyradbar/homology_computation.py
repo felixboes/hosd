@@ -20,10 +20,15 @@
 # Note: The script has to be called from sage itself
 # sage -python /path/to/script.py
 from sage.all import *
-from cell import *
-from cell_para import *
-from misc_useability_stuff import *
 import sys
+if sys.version_info[0] == 2:
+    from cell import *
+    from cell_para import *
+    from misc_useability_stuff import *
+elif  sys.version_info[0] == 3:
+    from .cell import *
+    from .cell_para import *
+    from .misc_useability_stuff import *
 import time
 
 # Note the following warning from the Sage Manual (version 6.7).

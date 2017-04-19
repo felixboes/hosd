@@ -24,9 +24,14 @@ import cairo
 import math
 import inspect
 import sys
-import perm
-from cell_colors import cell_color
-from cell import *
+if sys.version_info[0] == 2:
+    import perm
+    from cell_colors import cell_color
+    from cell import *
+elif sys.version_info[0] == 3:
+    from . import perm
+    from .cell_colors import cell_color
+    from .cell import *
 
 def centroid_polyhedron(vertices):
     """
@@ -279,6 +284,6 @@ class DrawCell( object ):
         except:
             # Print the error.
             frameinfo = inspect.getframeinfo(inspect.currentframe())
-            print frameinfo.filename, frameinfo.lineno
+            sys.stdout.write(str(frameinfo.filename) + ' ' + str(frameinfo.lineno) + '\n')
             e, p, t = sys.exc_info()
-            print e, p
+            sys.stdout.write(str(e) + ' ' + str(p) + '\n')

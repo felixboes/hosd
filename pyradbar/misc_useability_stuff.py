@@ -64,7 +64,7 @@ def preamble( sage_path = None ):
             if not os.path.exists('./data/'):
                 os.makedirs('./data/')
             touch('./data/version')
-            with open('./data/version', 'rb') as f:
+            with open('./data/version', 'r') as f:
                 version_by_git = f.readline().replace('\n', '')
                 if version_by_git == '':
                     version_by_git = 'unkown'

@@ -17,8 +17,20 @@
 # You should have received a copy of the GNU General Public License
 # along with pyradbar.  If not, see <http://www.gnu.org/licenses/>.
 
-from cell import *
-from cell_para import *
-from draw_cell import *
-from misc_useability_stuff import *
-from perm import *
+import sys
+major, minor = sys.version_info[0], sys.version_info[1]
+if major == 2:
+  from cell import *
+  from cell_para import *
+  from draw_cell import *
+  from misc_useability_stuff import *
+  from perm import *
+  from symmetric_group import *
+elif major == 3:
+  from .cell import *
+  from .cell_para import *
+  from .draw_cell import *
+  from .misc_useability_stuff import *
+  from .perm import *
+  from .symmetric_group import *
+  from .homology_computation_symm import compute_homology_symm

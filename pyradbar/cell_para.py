@@ -21,9 +21,15 @@ import copy
 import os
 import sys
 import gzip
-import cPickle as pickle
+if sys.version_info[0] == 2:
+    import cPickle as pickle
+    import perm
+else:
+    import pickle
+    from . import perm
 import inspect
-import perm
+
+
 
 class CellPara:
     def __init__( self, rho, deg, suspend=True ):
