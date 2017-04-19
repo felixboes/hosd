@@ -32,8 +32,9 @@ def create_directories( g, m ):
     except:
         raise
 
-# Print a nice preamble.
+
 def preamble( sage_path = None ):
+    """"Print a nice preamble."""
     ret  = 'Programcall:     '
     for arg in sys.argv:
         ret += ' ' + arg
@@ -87,16 +88,18 @@ def preamble( sage_path = None ):
     
     return ret, True if found_sage or sage_path is None else False
 
-# Portable version of the GNU 'touch' command.
+
 def touch(filename, timestamp=None):
+    """"Portable version of the GNU 'touch' command."""
     try:
         with open(filename, 'a'):
             os.utime(filename, timestamp)
     except:
         raise
 
-# Portabel version of the GNU 'which' command.
+
 def which(program):
+    """"Portabel version of the GNU 'which' command."""
     def is_executable(path):
         return os.path.isfile(path) and os.access(path, os.X_OK)
 
@@ -114,8 +117,9 @@ def which(program):
                 return executable_file
     return None
 
-# A class simulating the linux program 'tee'.
+
 class Tee(object):
+    """"A class simulating the linux program 'tee'."""
     def __init__(self, name, mode):
         self._file = None
         # Open file.
@@ -164,3 +168,102 @@ class Tee(object):
                 self._file = None
         except:
             pass
+
+
+def write_chaincomplex_to_chomp_representation(open_file, diffs, verbose):
+    """" This function is an alternation of the SageMath function
+         def _chomp_repr_(self)" in "SageMath/local/lib/python2.7/site-packages/sage/homology/chain_complex.py"
+         This provides an enormous speed up."""
+
+    if len(diffs) == 0:
+        diffs = {0: (0, 0, [])}
+    maxdim = max(diffs)
+    mindim = 0
+    s = "chain complex\n\nmax dimension = %s\n\n" % (maxdim - mindim)
+    try:
+        open_file.write(s)
+    except:
+        raise
+
+    for i in range(0, maxdim + 1):
+        if verbose:
+            sys.stdout.write("  Dimension " + str(i) + " ... ")
+            sys.stdout.flush()
+            starting_time = time.clock()
+
+        s = "dimension %s\n" % i
+        num_rows, num_cols, mat = diffs.get(i, (0, 0, []))
+
+        # We sort the matrix dictionary which is  of the form
+        #     (row, col) -> coeff
+        # by the columns.
+        sorted_keys = sorted(mat, key=lambda s: s[1])
+        # col_idx is the column index treated last
+        col_idx = -1
+        # non_zero_column is set to True or Flase if the the treated column is zero or not
+        non_zero_column = None
+
+        # We iterate through columns via sorted keys
+        for key in sorted_keys:
+            # Check if the column index of the key changed
+            if col_idx != key[1]:
+                col_idx += 1
+                # We finalize last column.
+                # Observe that we use True and False
+                # In particular we do not print an extra new line on the first iteration on sorted_keys.
+                if non_zero_column is True:
+                    s += "\n"
+                elif non_zero_column is False:
+                    s += "0\n"
+                # We write empty columns (if any)
+                while col_idx < key[1]:
+                    s += "   boundary a%s = 0\n" % (col_idx + 1)
+                    col_idx += 1
+                # We start next column
+                s += "   boundary a%s = " % (col_idx + 1)
+                non_zero_column = False
+            # Get the coefficient and write the entry if it is non-zero
+            coeff = mat[key]
+            if coeff > 0:
+                s += "+ %s * a%s " % (coeff, key[0] + 1)
+                non_zero_column = True
+            elif coeff < 0:
+                s += "- %s * a%s " % (-coeff, key[0] + 1)
+                non_zero_column = True
+
+        # We finalize last column that was treated by iteration through sorted_keys.
+        # If sorted_keys was not empty then non_zero_column is either True or False. Otherwise it is None.
+        if non_zero_column is True:
+            s += "\n"
+        elif non_zero_column is False:
+            s += "0\n"
+        col_idx += 1
+
+        # We treat the remaining zero columns.
+        while col_idx < num_cols:
+            s += "   boundary a%s = 0\n" % (col_idx + 1)
+            col_idx += 1
+        s += "\n"
+
+        try:
+            open_file.write(s)
+        except:
+            raise
+
+        if verbose:
+            sys.stdout.write('Done. Duration = ' + str(time.clock() - starting_time) + '\n')
+            sys.stdout.flush()
+
+
+def write_performance_test(diffs):
+    with open('performance_test.py', 'w') as datei:
+        datei.write('from sage.all import ChainComplex, matrix, ZZ\n')
+        datei.write('dict_chaincomplex = dict()\n')
+        for degree, mat in diffs.items():
+            num_rows, num_cols, bdry_matrix_dict = mat
+            datei.write(
+                'dict_chaincomplex[{degree}] = matrix(ZZ, {num_rows}, {num_cols}, {bdry_matrix_dict}, sparse=True)\n'.format(
+                    degree=degree, num_rows=num_rows, num_cols=num_cols, bdry_matrix_dict=bdry_matrix_dict))
+        datei.write('cplx = ChainComplex(dict_chaincomplex, degree_of_differential=-1, check=True)\n')
+        datei.write('with open("test.bin", "w") as f:\n')
+        datei.write('  f.write(cplx._chomp_repr_())\n')
