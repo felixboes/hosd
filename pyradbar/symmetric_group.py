@@ -133,7 +133,7 @@ class SymmetricGroup(object):
     # Compute the map representation:
     permutations = []
     for cyc in cyc_decs:
-      rep = self._d*[0]
+      rep = (self._d+1)*[0]
       for i in range(self._d+1):
         rep[cyc[i]] = cyc[(i + 1) % (self._d+1)]
       permutations.append(Permutation(self._d, rep))

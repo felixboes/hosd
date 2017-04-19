@@ -55,8 +55,8 @@ def compute_homology_symm(max_d, verbose=True, homchain_file=None):
       starting_time = time.process_time()
 
     sym = SymmetricGroup(max_d)
-    #cells = sym.get_long_cycles()
-    cells = sym.get_all_permutations()
+    cells = sym.get_long_cycles()
+    #cells = sym.get_all_permutations()
     print(len(cells), ' ... ', end='')
     for cell in cells:
       next_basis[cell] = next_basis.get(cell, len(next_basis))
