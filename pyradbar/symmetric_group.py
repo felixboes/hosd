@@ -124,8 +124,14 @@ class SymmetricGroup(object):
   def __init__(self, d):
     self._d = d
 
-  def get_all_permutations(self):
-    return [Permutation(self._d, p) for p in itertools.permutations(range(self._d+1))]
+  def get_all_permutations(self, num_cyc = None):
+    if num_cyc is not None:
+      if num_cyc == 1:
+        return self.get_long_cycles()
+      else:
+        return [Permutation(self._d, p) for p in itertools.permutations(range(self._d+1)) if Permutation(self._d, p).num_cyc() == num_cyc ]
+    else:
+      return [Permutation(self._d, p) for p in itertools.permutations(range(self._d+1))]
 
   def get_long_cycles(self):
     # Compute permtuations that have one cycle by giving the cycle decomposition:
