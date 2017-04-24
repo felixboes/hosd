@@ -17,9 +17,11 @@
 # You should have received a copy of the GNU General Public License
 # along with pyradbar.  If not, see <http://www.gnu.org/licenses/>.
 
-# Note: The script has to be called from sage itself
+# Note: The script can be called from sage.
 # sage -python /path/to/script.py
-from sage.all import *
+if __name__ == '__main__':
+    from sage.all import *
+
 import sys
 if sys.version_info[0] == 2:
     from cell import *
@@ -30,19 +32,6 @@ elif  sys.version_info[0] == 3:
     from .cell_para import *
     from .misc_useability_stuff import *
 import time
-
-# Note the following warning from the Sage Manual (version 6.7).
-# Warning: Right now, homology calculations will only work if the base ring is either Z or a field,
-# so please take this into account when defining a chain complex.
-#
-# Moreover: There is a bug in the function homology(). If we set verbose=True,
-# the function tries to read an undefined variable. Thats unfortunate.
-
-def sage_test():
-    C = ChainComplex({0: matrix(ZZ, 2, 3, [3, 0, 0, 0, 0, 0])})
-    print C.differential() 
-    print "Computing homology"
-    print C.homology()
 
 def compute_homology(g = 1, m = 2, param_bdry=False, ring='ZZ', homol_alg='auto', verbose=True, more_verbose=False, sanity_checks=True, only_good_stuff=False, homchain_file=None ):
     # Setup coefficients and other variables.
@@ -63,7 +52,7 @@ def compute_homology(g = 1, m = 2, param_bdry=False, ring='ZZ', homol_alg='auto'
         sys.stdout.write('Opening file \'' + homchain_file + '\' ... ')
         sys.stdout.flush()
         try:
-            open_file = open(homchain_file, 'wb')
+            open_file = open(homchain_file, 'w')
         except:
             sys.stdout.write(' ABROATING! There was an error while writing the homchain file ' + homchain_file + '.\n')
             frameinfo = inspect.getframeinfo(inspect.currentframe())
@@ -73,15 +62,16 @@ def compute_homology(g = 1, m = 2, param_bdry=False, ring='ZZ', homol_alg='auto'
         else:
             sys.stdout.write('Done.\n')
             sys.stdout.flush()
-    coeff_ring = None
-    try:
-        coeff_ring = eval(ring)
-    except:
-        sys.stdout.write('\n')
-        sys.stdout.write('    Error: Could not identify your ring \''+str(ring)+'\'. Defaulting to the integers ZZ.\n')
-        sys.stdout.write('\n')
-        coeff_ring = ZZ
-        homol_alg = 'auto'
+        coeff_ring = None
+    else:
+        try:
+            coeff_ring = eval(ring)
+        except:
+            sys.stdout.write('\n')
+            sys.stdout.write('    Error: Could not identify your ring \''+str(ring)+'\'. Defaulting to the integers ZZ.\n')
+            sys.stdout.write('\n')
+            coeff_ring = ZZ
+            homol_alg = 'auto'
     
     # Setup other variables.
     next_basis = {}
@@ -122,7 +112,7 @@ def compute_homology(g = 1, m = 2, param_bdry=False, ring='ZZ', homol_alg='auto'
         sys.stdout.flush()
         starting_time = time.clock()
 
-    next_basis, num_rows, num_cols, bdry_matrix_dict = compute_faces_matrix(next_basis, only_good_stuff)
+    next_basis, num_rows, num_cols, bdry_matrix_dict = compute_faces_matrix(next_basis, degree, only_good_stuff)
 
     # Either we save it to file (later) or store it internally.
     if homchain_file is None:
@@ -142,7 +132,7 @@ def compute_homology(g = 1, m = 2, param_bdry=False, ring='ZZ', homol_alg='auto'
             sys.stdout.flush()
             starting_time = time.clock()
 
-            next_basis, num_rows, num_cols, bdry_matrix_dict = compute_faces_matrix(next_basis, only_good_stuff)
+            next_basis, num_rows, num_cols, bdry_matrix_dict = compute_faces_matrix(next_basis, degree, only_good_stuff)
 
             # Either we save it to file (later) or store it internally.
             if homchain_file is None:
@@ -167,10 +157,10 @@ def compute_homology(g = 1, m = 2, param_bdry=False, ring='ZZ', homol_alg='auto'
         if verbose:
             sys.stdout.write('Done. Duration = ' + str(time.clock() - starting_time) + '\n')
         if verbose and more_verbose:
-            print cplx
+            sys.stdout.write(str(cplx))
             for key, val in cplx.differential().items():
-                print key
-                print val
+                sys.stdout.write(str(key))
+                sys.stdout.write(str(val))
     else:
         sys.stdout.write('Writing chain complex representation to file \'' + homchain_file + '\' : \n')
         sys.stdout.flush()
@@ -212,7 +202,7 @@ def compute_homology(g = 1, m = 2, param_bdry=False, ring='ZZ', homol_alg='auto'
     # Done.
     return homol
 
-def compute_faces_matrix( cells, only_good_stuff=False ):
+def compute_faces_matrix( cells, degree, only_good_stuff=False ):
     # Recall the following passage from the sage 6.7 manual:
     # The entries of a matrix can be specified as a flat list of elements,
     # a list of lists (i.e., a list of rows), a list of Sage vectors, a callable object,
@@ -229,10 +219,7 @@ def compute_faces_matrix( cells, only_good_stuff=False ):
     # Return empty stuff if input is empty.
     if cells is None or len(cells) == 0:
         return next_basis, num_rows, num_cols, matrix_dict
-    
-    # Get the degree.
-    # The 'first' element of a dictionary is given by cells.iterkeys().next()
-    degree = cells.iterkeys().next().degree()
+
     if degree == 0:
         num_cols = len(cells)
         return next_basis, num_rows, num_cols, matrix_dict
@@ -266,7 +253,7 @@ def compute_faces_matrix( cells, only_good_stuff=False ):
     # Done.
     return next_basis, num_rows, num_cols, matrix_dict
 
-def main(g=0, m=7, param_bdry=False, ring=None, homol_alg=None, verbose=None, more_verbose=None, sanity_checks=None, only_good_stuff=None, result_file=None, homchain_file=None):
+def homology_computation_main(g=0, m=7, param_bdry=False, ring=None, homol_alg=None, verbose=None, more_verbose=None, sanity_checks=None, only_good_stuff=None, result_file=None, homchain_file=None):
     # Tee the output.
     tee = Tee(result_file, 'a' )
     
@@ -277,4 +264,5 @@ def main(g=0, m=7, param_bdry=False, ring=None, homol_alg=None, verbose=None, mo
         sys.stdout.write('The Homology of the complex should be computed using the program \'homchain_gmp\'.\n')
     sys.stdout.flush()
 
-main(int(sys.argv[1]), int(sys.argv[2]), sys.argv[3], sys.argv[4], sys.argv[5], sys.argv[6], sys.argv[7], sys.argv[8], sys.argv[9], sys.argv[10], sys.argv[11] if len(sys.argv) > 11 else None )
+if __name__ == '__main__':
+    homology_computation_main(int(sys.argv[1]), int(sys.argv[2]), sys.argv[3], sys.argv[4], sys.argv[5], sys.argv[6], sys.argv[7], sys.argv[8], sys.argv[9], sys.argv[10], sys.argv[11] if len(sys.argv) > 11 else None )

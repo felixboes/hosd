@@ -53,7 +53,7 @@ class Cell:
         self._m = self.num_cyc_rho() + self.num_fixed_pts_lam() - (1 if suspend else 0)
         # An Euler characteristic argument shows (for desuspended cells)
         # 2 - 2g - m - 1 = - num pixed pts lam - norm lam; so g = (num pixed pts lam + norm lam + 1 - m)/2
-        self._g = ( self.num_fixed_pts_lam() - (1 if suspend else 0) + self.norm_lam() - self._m + 1 ) /2
+        self._g = ( self.num_fixed_pts_lam() - (1 if suspend else 0) + self.norm_lam() - self._m + 1 ) // 2
         cycles_of_lam = self.cyc_lam()
         self._surface_of_symbol = copy.deepcopy(self._lam_cyc_of_symbol)
         self._surface = [ [ [n], 0, 0 ] for n, cyc in enumerate(cycles_of_lam) ]

@@ -24,20 +24,20 @@ import pyradbar
 import subprocess
 import sys
 
-def call_sage(g=1, m=2, parametrized=False, ring=None, homol_alg=None, verbose=None, more_verbose=None, sanity_checks=None, only_good_stuff=None, sage_path=None, result_file=None, homcain_file=None ):
+def call_sage(g=1, m=2, param_bdry=False, ring=None, homol_alg=None, verbose=None, more_verbose=None, sanity_checks=None, only_good_stuff=None, sage_path=None, result_file=None, homchain_file=None ):
     script_path = './pyradbar/homology_computation.py'
-    sys.stdout.write('Calling ' + sage_path + ' -python ' + script_path + ' ' + str(g) + ' ' + str(m) + ' ' + str(parametrized) + ' ' + str(ring) + ' ' + str(homol_alg) + ' ' + str(verbose) + ' ' + str(more_verbose) + ' ' + str(sanity_checks) + ' ' + str(only_good_stuff) + ' ' + str(result_file) + (' ' + str(homcain_file[0]) if homcain_file is not None else str('') ) + '\n')
+    sys.stdout.write('Calling ' + sage_path + ' -python ' + script_path + ' ' + str(g) + ' ' + str(m) + ' ' + str(param_bdry) + ' ' + str(ring) + ' ' + str(homol_alg) + ' ' + str(verbose) + ' ' + str(more_verbose) + ' ' + str(sanity_checks) + ' ' + str(only_good_stuff) + ' ' + str(result_file) + (' ' + str(homchain_file) if homchain_file is not None else str('') ) + '\n')
     sys.stdout.flush()
-    cmd = [sage_path, "-python", script_path, str(g), str(m), str(parametrized), str(ring), str(homol_alg), str(verbose), str(more_verbose), str(sanity_checks), str(only_good_stuff), str(result_file)]
-    if homcain_file is not None:
-        cmd.append(homcain_file[0])
+    cmd = [sage_path, "-python", script_path, str(g), str(m), str(param_bdry), str(ring), str(homol_alg), str(verbose), str(more_verbose), str(sanity_checks), str(only_good_stuff), str(result_file)]
+    if homchain_file is not None:
+        cmd.append(homchain_file)
     subprocess.call(cmd)
 
 def main():
     # check for correct version.
     major, minor = sys.version_info[0], sys.version_info[1]
     if major < 2 or (major == 2 and minor < 7):
-        raise "Python >= 2.7 is required for argument parsing."
+        raise RuntimeError('Python >= 2.7 is required for argument parsing.')
     
     # Use the argparse library. The library optparse is deprecated since version 2.7.
     # Compare the documentation: https://docs.python.org/2/library/argparse.html
@@ -55,14 +55,14 @@ def main():
     # Thus, we supress nargs.
     parser.add_argument('-g', '--gen',   required=True,  action='store', type=int, dest='g',             metavar='arg',  help='The genus of the Riemann surfaces')
     parser.add_argument('-m', '--pun',   required=True,  action='store', type=int, dest='m',             metavar='arg',  help='The number of punctures of the Riemann surfaces')
-    parser.add_argument('-r', '--coeff',                 action='store', type=str, dest='ring',          metavar='arg',  help='The coefficient ring. Either ZZ or a field in sage notation like QQ or GF(2).', default='QQ')
-    parser.add_argument('-p', '--parametrized',          action='store_true',      dest='parametrized',                  help='Consider parametrized boundary.', default=False)
+    parser.add_argument('-r', '--coeff',                 action='store', type=str, dest='ring',          metavar='arg',  help='The coefficient ring. Either ZZ or a field in sage notation like QQ or GF(2).', default='ZZ')
+    parser.add_argument('-p', '--parametrized',          action='store_true',      dest='param_bdry',                    help='Consider parametrized boundary.', default=False)
     parser.add_argument('--alg', '--homology_algorithm', action='store', type=str, dest='homol_alg',     metavar='arg',  help='The algorithm that is used to compute the homology e.g. \'chomp\'. All possible options are found in the sage manual.', default='auto')
     parser.add_argument('--sanity_checks',               action='store_true',      dest='sanity_checks',                 help='Perform sanity checks, e.g. D(n) \circ D(n+1) = 0.', default=False)
     parser.add_argument('-v',                            action='store_true',      dest='more_verbose',                  help='Print more status information.', default=False)
     parser.add_argument('-s',                            action='store_true',      dest='silent',                        help='Print no status information.', default=False)
-    parser.add_argument('--sage',                        action='store', type=str, dest='sage_path',     metavar='path', help='The Path to the sage executable', default='./sage-6.8-x86_64-Linux/sage')
-    parser.add_argument('--save_homchain',               action='store', nargs=1,  dest='homcain_file',  metavar='file', help='Store homchain file.')
+    parser.add_argument('--sage',                        action='store', type=str, dest='sage_path',     metavar='path', help='The Path to the sage executable')
+    parser.add_argument('--save_homchain',               action='store', nargs=1,  dest='homchain_file', metavar='file', help='Store homchain file.')
     parser.add_argument('--only_good_stuff',             action='store_true',      dest='only_good_stuff',               help='Compute the homology of the quotient by the bad stuff.')
     args=vars( parser.parse_args() )
     
@@ -75,6 +75,12 @@ def main():
     else:
         args['verbose'] = args.get('verbose', 'True')
     del args['silent']
+
+    # Setup homchain_file.
+    if args['homchain_file'] is not None:
+        args['homchain_file'] = args['homchain_file'][0]
+    else:
+        args['homchain_file'] = None
 
     # The name of the results file.
     args['result_file'] = './results/' + ''.join( [str(param).replace(' ', '_').replace('/', '_') for param in sys.argv if str(param) ] ).strip('.').lstrip('_')
@@ -96,11 +102,18 @@ def main():
     
     # Stop of something went wrong.
     if valid == False:
-        print "Could not initialize everything. Abroating." 
+        sys.stdout.write('Could not initialize everything. Abroating.\n')
+        return 1
+    if args['sage_path'] is None and args['homchain_file'] is None:
+        sys.stdout.write('Provide either the path to a sage executable or provide a homchain_file. Abroating.\n')
         return 1
     
     # Start actual computation.
-    call_sage(**args )
+    if args['sage_path'] is not None:
+        call_sage(**args)
+    else:
+        del args['sage_path']
+        pyradbar.homology_computation_main(**args)
     
     # Cleanup screen with new lines. This is not written to the result file.
     sys.stdout.write('\n\n\n')

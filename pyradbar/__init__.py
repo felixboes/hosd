@@ -26,6 +26,7 @@ if major == 2:
   from misc_useability_stuff import *
   from perm import *
   from symmetric_group import *
+  from homology_computation import *
 elif major == 3:
   from .cell import *
   from .cell_para import *
@@ -33,4 +34,5 @@ elif major == 3:
   from .misc_useability_stuff import *
   from .perm import *
   from .symmetric_group import *
+  from .homology_computation import *
   from .homology_computation_symm import compute_homology_symm

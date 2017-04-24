@@ -20,11 +20,14 @@
 # along with pyradbar.  If not, see <http://www.gnu.org/licenses/>.
 
 import argparse
-import cPickle as pickle
 import gzip
 import inspect
 import sys
 import time
+if sys.version_info[0] == 2:
+    import cPickle as pickle
+else:
+    import pickle
 
 import pyradbar
 
@@ -67,7 +70,7 @@ def parametrize( cyc_rhoprime, p, marking ):
 # Store all top cells for which 2g+m = h.
 def store_top_cells( h, parametrized=False ):
     if h < 1:
-        print "h = 2g+m-1 is to small."
+        sys.stdout.write('h = 2g+m-1 is to small.')
         return
     
     sys.stdout.write('Creating and storing cells for 2g+m=' + str(h) + ' ... ' + '\r' )
@@ -77,7 +80,7 @@ def store_top_cells( h, parametrized=False ):
     # m and archive as a function of g
     m_of = []
     archive_of = []
-    for g in range( (h+2)/ 2 ):
+    for g in range( (h+2)// 2 ):
         #exclude m = 0
         if h - 2*g <= 0:
             continue
@@ -90,9 +93,9 @@ def store_top_cells( h, parametrized=False ):
         except:
             # Print the error.
             frameinfo = inspect.getframeinfo(inspect.currentframe())
-            print frameinfo.filename, frameinfo.lineno
+            sys.stdout.write(str(frameinfo.filename) + ' ' + str(frameinfo.lineno) + '\n')
             e, p, t = sys.exc_info()
-            print e, p
+            sys.stdout.write(str(e) + ' ' + str(p) + '\n')
             return
     
     # iterate through all pairs
@@ -103,7 +106,7 @@ def store_top_cells( h, parametrized=False ):
         low = lst[0]
         for i in range(1,len(lst)):
             pair = (low,lst[i])
-            for remaining in list_of_pairs( lst[1:i] + lst[i+1: ] ):
+            for remaining in list_of_pairs( list(lst[1:i]) + list(lst[i+1:]) ):
                 yield [pair] + remaining
     
     lams = list( list_of_pairs( range(0, 2*h-2) ) )
@@ -162,7 +165,7 @@ def main():
     # check for correct version.
     major, minor = sys.version_info[0], sys.version_info[1]
     if major < 2 or (major == 2 and minor < 7):
-        raise "Python >= 2.7 is required for argument parsing."
+        raise RuntimeError('Python >= 2.7 is required for argument parsing.')
     
     # Use the argparse library. The library optparse is deprecated since version 2.7.
     # Compare the documentation: https://docs.python.org/2/library/argparse.html
@@ -192,7 +195,7 @@ def main():
     
     # Stop of something went wrong.
     if valid == False:
-        print "Could not initialize everything. Abroating." 
+        sys.stdout.write('Could not initialize everything. Abroating.\n')
         return 1
     
     # Start actual computation.
