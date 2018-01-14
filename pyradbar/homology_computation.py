@@ -17,29 +17,13 @@
 # You should have received a copy of the GNU General Public License
 # along with pyradbar.  If not, see <http://www.gnu.org/licenses/>.
 
-# Note: The script has to be called from sage itself
-# sage -python /path/to/script.py
-from sage.all import *
 from cell import *
 from cell_para import *
 from misc_useability_stuff import *
 import sys
 import time
 
-# Note the following warning from the Sage Manual (version 6.7).
-# Warning: Right now, homology calculations will only work if the base ring is either Z or a field,
-# so please take this into account when defining a chain complex.
-#
-# Moreover: There is a bug in the function homology(). If we set verbose=True,
-# the function tries to read an undefined variable. Thats unfortunate.
-
-def sage_test():
-    C = ChainComplex({0: matrix(ZZ, 2, 3, [3, 0, 0, 0, 0, 0])})
-    print C.differential() 
-    print "Computing homology"
-    print C.homology()
-
-def compute_homology(g = 1, m = 2, param_bdry=False, ring='ZZ', homol_alg='auto', verbose=True, more_verbose=False, sanity_checks=True, only_good_stuff=False, homchain_file=None ):
+def compute_homology(g = 1, m = 2, param_bdry=False, verbose=True, more_verbose=False, only_good_stuff=False, homchain_file=None ):
     # Setup coefficients and other variables.
     if g < 0 or m <= 0:
         sys.stdout.write('The genus has to be non-negative and the number of punctures has to be positive.\nGot g = ' + str(g) + '; m = ' + str(m) + '.\n')
@@ -51,32 +35,21 @@ def compute_homology(g = 1, m = 2, param_bdry=False, ring='ZZ', homol_alg='auto'
     param_bdry = True if param_bdry == 'True' else False
     verbose = True if verbose == 'True' else False
     more_verbose = True if more_verbose == 'True' else False
-    sanity_checks = True if sanity_checks == 'True' else False
     only_good_stuff = True if only_good_stuff == 'True' else False
     open_file = None
-    if homchain_file is not None:
-        sys.stdout.write('Opening file \'' + homchain_file + '\' ... ')
-        sys.stdout.flush()
-        try:
-            open_file = open(homchain_file, 'wb')
-        except:
-            sys.stdout.write(' ABROATING! There was an error while writing the homchain file ' + homchain_file + '.\n')
-            frameinfo = inspect.getframeinfo(inspect.currentframe())
-            e, p, t = sys.exc_info()
-            sys.stdout.write( str(frameinfo.filename) + ' ' + str(frameinfo.lineno) + '\n' + str(e) + ' ' + str(p) + '\n')
-            sys.stdout.flush()
-        else:
-            sys.stdout.write('Done.\n')
-            sys.stdout.flush()
-    coeff_ring = None
+    sys.stdout.write('Opening file \'' + homchain_file + '\' ... ')
+    sys.stdout.flush()
     try:
-        coeff_ring = eval(ring)
+        open_file = open(homchain_file, 'wb')
     except:
-        sys.stdout.write('\n')
-        sys.stdout.write('    Error: Could not identify your ring \''+str(ring)+'\'. Defaulting to the integers ZZ.\n')
-        sys.stdout.write('\n')
-        coeff_ring = ZZ
-        homol_alg = 'auto'
+        sys.stdout.write(' ABROATING! There was an error while writing the homchain file ' + homchain_file + '.\n')
+        frameinfo = inspect.getframeinfo(inspect.currentframe())
+        e, p, t = sys.exc_info()
+        sys.stdout.write( str(frameinfo.filename) + ' ' + str(frameinfo.lineno) + '\n' + str(e) + ' ' + str(p) + '\n')
+        sys.stdout.flush()
+    else:
+        sys.stdout.write('Done.\n')
+        sys.stdout.flush()
     
     # Setup other variables.
     next_basis = {}
@@ -86,11 +59,8 @@ def compute_homology(g = 1, m = 2, param_bdry=False, ring='ZZ', homol_alg='auto'
     
     # Load top cells.
     if verbose:
-        sys.stdout.write('We construct the cellular complex for g = ' + str(g) + ' and m = ' + str(m) + ' with ' + ( 'un' if param_bdry == False else '')  +'parametrized boundaries and with coefficients in \''+str(coeff_ring)+'\'.\n')
-        if homchain_file is None:
-            sys.stdout.write('Then we compute its homology using the sage algorithm \'' + homol_alg + '\'.\n\n')
-        else:
-            sys.stdout.write('Then we save the chain complex in chomp representation to \'' + homchain_file + '\'.\n\n')
+        sys.stdout.write('We construct the cellular complex for g = ' + str(g) + ' and m = ' + str(m) + ' with ' + ( 'un' if param_bdry == False else '')  +'parametrized boundaries.\n')
+        sys.stdout.write('Then we save the chain complex in chomp representation to \'' + homchain_file + '\'.\n\n')
         sys.stdout.write('Loading top cells ... ')
         sys.stdout.flush()
         starting_time = time.clock()
@@ -118,12 +88,7 @@ def compute_homology(g = 1, m = 2, param_bdry=False, ring='ZZ', homol_alg='auto'
         starting_time = time.clock()
 
     next_basis, num_rows, num_cols, bdry_matrix_dict = compute_faces_matrix(next_basis, only_good_stuff)
-
-    # Either we save it to file (later) or store it internally.
-    if homchain_file is None:
-        dict_chaincomplex[degree] = matrix(coeff_ring, num_rows, num_cols, bdry_matrix_dict, sparse=True)
-    else:
-        dict_chaincomplex[degree] = (num_rows, num_cols, bdry_matrix_dict)
+    dict_chaincomplex[degree] = (num_rows, num_cols, bdry_matrix_dict)
 
     degree -= 1
 
@@ -138,12 +103,7 @@ def compute_homology(g = 1, m = 2, param_bdry=False, ring='ZZ', homol_alg='auto'
             starting_time = time.clock()
 
             next_basis, num_rows, num_cols, bdry_matrix_dict = compute_faces_matrix(next_basis, only_good_stuff)
-
-            # Either we save it to file (later) or store it internally.
-            if homchain_file is None:
-                dict_chaincomplex[degree] = matrix(coeff_ring, num_rows, num_cols, bdry_matrix_dict, sparse=True)
-            else:
-                dict_chaincomplex[degree] = (num_rows, num_cols, bdry_matrix_dict)
+            dict_chaincomplex[degree] = (num_rows, num_cols, bdry_matrix_dict)
 
         if verbose:
             sys.stdout.write('Done. Duration = ' + str(time.clock() - starting_time) + '\n')
@@ -155,57 +115,27 @@ def compute_homology(g = 1, m = 2, param_bdry=False, ring='ZZ', homol_alg='auto'
         sys.stdout.flush()
         starting_time = time.clock()
 
-    # Either we save it to file or store it internally.
-    cplx = None
-    if homchain_file is None:
-        cplx = ChainComplex(dict_chaincomplex, degree_of_differential=-1, check=sanity_checks)
-        if verbose:
-            sys.stdout.write('Done. Duration = ' + str(time.clock() - starting_time) + '\n')
-        if verbose and more_verbose:
-            print cplx
-            for key, val in cplx.differential().items():
-                print key
-                print val
-    else:
-        sys.stdout.write('Writing chain complex representation to file \'' + homchain_file + '\' : \n')
+    sys.stdout.write('Writing chain complex representation to file \'' + homchain_file + '\' : \n')
+    sys.stdout.flush()
+    try:
+        write_chaincomplex_to_chomp_representation( open_file, dict_chaincomplex, verbose )
+    except:
+        sys.stdout.write(' ABROATING! There was an error while writing the homchain file ' + homchain_file + '.\n')
+        frameinfo = inspect.getframeinfo(inspect.currentframe())
+        e, p, t = sys.exc_info()
+        sys.stdout.write( str(frameinfo.filename) + ' ' + str(frameinfo.lineno) + '\n' + str(e) + ' ' + str(p) + '\n')
         sys.stdout.flush()
         try:
-            write_chaincomplex_to_chomp_representation( open_file, dict_chaincomplex, verbose )
+            open_file.close()
         except:
-            sys.stdout.write(' ABROATING! There was an error while writing the homchain file ' + homchain_file + '.\n')
-            frameinfo = inspect.getframeinfo(inspect.currentframe())
-            e, p, t = sys.exc_info()
-            sys.stdout.write( str(frameinfo.filename) + ' ' + str(frameinfo.lineno) + '\n' + str(e) + ' ' + str(p) + '\n')
-            sys.stdout.flush()
-            try:
-                open_file.close()
-            except:
-                pass
-            raise
-        else:
-            try:
-                open_file.close()
-            except:
-                raise
-            return
-    
-    # Compute homology.
-    if verbose:
-        sys.stdout.write('Computing the homology ... ')
-        sys.stdout.flush()
-        starting_time = time.clock()
-    homol = None
-    if coeff_ring is ZZ:
-        # On some sage version (e.g. algorithm=pari on 6.8), verbose will produce an error.
-        homol = cplx.homology(algorithm=homol_alg, verbose=more_verbose)
+            pass
+        raise
     else:
-        homol = cplx.betti()
-    if verbose:
-        sys.stdout.write('Done. Duration = ' + str(time.clock() - starting_time) + '\n')
-        sys.stdout.flush()
-    
-    # Done.
-    return homol
+        try:
+            open_file.close()
+        except:
+            raise
+    return
 
 def compute_faces_matrix( cells, only_good_stuff=False ):
     # Recall the following passage from the sage 6.7 manual:
@@ -261,15 +191,13 @@ def compute_faces_matrix( cells, only_good_stuff=False ):
     # Done.
     return next_basis, num_rows, num_cols, matrix_dict
 
-def main(g=0, m=7, param_bdry=False, ring=None, homol_alg=None, verbose=None, more_verbose=None, sanity_checks=None, only_good_stuff=None, result_file=None, homchain_file=None):
+def main(g=0, m=7, param_bdry=False, verbose=None, more_verbose=None, only_good_stuff=None, result_file=None, homchain_file=None):
     # Tee the output.
     tee = Tee(result_file, 'a' )
     
-    homol = compute_homology(g, m, param_bdry, ring, homol_alg, verbose, more_verbose, sanity_checks, only_good_stuff, homchain_file)
-    if homol is not None:
-        sys.stdout.write('Homology = ' + str(homol) + '\n')
-    else:
-        sys.stdout.write('The Homology of the complex should be computed using the program \'homchain_gmp\'.\n')
+    compute_homology(g, m, param_bdry, verbose, more_verbose, only_good_stuff, homchain_file)
+    sys.stdout.write('The Homology of the complex should be computed using the program \'homchain_gmp\'.\n')
     sys.stdout.flush()
 
-main(int(sys.argv[1]), int(sys.argv[2]), sys.argv[3], sys.argv[4], sys.argv[5], sys.argv[6], sys.argv[7], sys.argv[8], sys.argv[9], sys.argv[10], sys.argv[11] if len(sys.argv) > 11 else None )
+if __name__ == '__main__':
+    main(int(sys.argv[1]), int(sys.argv[2]), sys.argv[3], sys.argv[4], sys.argv[5], sys.argv[6], sys.argv[7], sys.argv[8])

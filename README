@@ -1,44 +1,42 @@
 *) Some introductory words
 
 Our program is used to compute the homology of unlabelled 1-Sullivan diagrams.
-Moreover, we can draw unlabelled, unparametrized 1-Sullivan diagrams.
-
 
 
 *) Performing computations
 
-In order to perform computations, one needs python2.7 and SageMath installed.
-Then, you need to create the top cells for h=2g+m.
+In order to perform computations, you need to perform several steps.
+
+1) You need to create the top cells for h=2g+m.
 This is done with
   ./create_and_store_top_cells.py --hh h
 in the unparametrized case and with
   ./create_and_store_top_cells.py -p --hh h
 in the parametrized case.
 
-Then, you call 
-  ./compute_homology.py -g genus -m punct
-with genus the genus you are interested in and punct the number of punctures you are interested in.
+2) Then, you need to construct the integral chain complex and save it to a certain file (here it is called test.chomp):
+  ./compute_homology.py -g genus -m punct --save_homchain test.chomp
+where 'genus' the genus you are interested in and 'punct' the number of punctures you are interested in.
 
 There are more options that can be feeded to the progam e.g.:
-  -r arg
-this is the coefficient ring: ZZ for the integers QQ for the rationals. You can use all fields that SageMath implements (e.g. finite fields).
   -p
-for the parametrized case
-  --sanity_checks
-to let SageMath check that the chaincomplex created is really a chain complex.
+for the parametrized unenmerated case
   -v
 for more status messages
   -s
 for almost no status messages
-  --sage path
-to give our program the path to the SageMath executable
-  --save_homchain path
-to sage the chaincomplex to a given path. This file can then be feeded to chomp via
-  ./homchain_gmp path
-Chomp must be compiled beforehand using our make file.
   --only_good_stuff
 computes the homology of all cells having no internal punctures or genus.
 
 The output of our program will be written to the 'standard output' and to a file in the folder 'results'.
+
+3) You need to compute the homology of the chain complex:
+In case you do not have homchain installed, hit
+  make
+Then you can compute the homology (of the file test.chomp) hit
+  ./homchain_gmp test.chomp
+
+
+*) Program version
 
 The version of the program is either provided by the file 'data/version' or it is the git-version of the program.
